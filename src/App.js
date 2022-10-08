@@ -3,7 +3,8 @@ import './App.css';
 import DigitButton from "./components/DigitButton";
 
 export const ACTIONS = {
-  ADD_DIGIT: "add-digit"
+  ADD_DIGIT: "add-digit",
+  CLEAR: "clear"
 }
 
 function reducer(state, { type, payload }) {
@@ -13,6 +14,8 @@ function reducer(state, { type, payload }) {
         ...state,
         currOperand: `${state.currOperand || ""}${payload}`
       };
+    case ACTIONS.CLEAR:
+      return {};
     default:
       return state;
   }
@@ -27,7 +30,7 @@ function App() {
         <div className="prev-operand">{prevOperand}</div>
         <div className="сurr-operand">{currOperand}</div>
       </div>
-      <button className='span-two'>AC</button>
+      <button className='span-two' onClick={() => dispatch({ type: ACTIONS.CLEAR })}>AC</button>
       <button>Del</button>
       <button>/</button>
       <DigitButton value="1" dispatch={dispatch} />
