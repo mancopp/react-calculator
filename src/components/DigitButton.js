@@ -2,7 +2,7 @@ import { ACTIONS } from "../App";
 
 function DigitButton({ value, dispatch }) {
     return (
-        <button onClick={() => dispatch({ type: ACTIONS.ADD_DIGIT, payload: value })}>
+        <button onClick={() => dispatch({ type: ACTIONS.ADD_DIGIT, payload: { value } })}>
             {value}
         </button>
     );

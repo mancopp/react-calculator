@@ -1,23 +1,67 @@
 import { useReducer } from "react";
 import './App.css';
 import DigitButton from "./components/DigitButton";
+import OperationButton from "./components/OperationButton";
 
 export const ACTIONS = {
   ADD_DIGIT: "add-digit",
-  CLEAR: "clear"
+  CLEAR: "clear",
+  OPERATION: "operation",
+  EQUALS: "equals"
 }
 
 function reducer(state, { type, payload }) {
   switch (type) {
     case ACTIONS.ADD_DIGIT:
-      return {
-        ...state,
-        currOperand: `${state.currOperand || ""}${payload}`
-      };
+      if (state.overwrite) {
+        return {
+          ...state,
+          prevOperand: state.currOperand,
+          currOperand: payload.value,
+          overwrite: false
+        }
+      } else {
+        return {
+          ...state,
+          currOperand: `${state.currOperand || ""}${payload.value}`
+        };
+      }
     case ACTIONS.CLEAR:
       return {};
+    case ACTIONS.OPERATION:
+      return {
+        ...state,
+        operation: payload.operation,
+        prevOperand: state.currOperand,
+        currOperand: null
+      }
+    case ACTIONS.EQUALS:
+      return {
+        ...state,
+        operation: null,
+        prevOperand: null,
+        currOperand: evaluate(state.prevOperand, state.currOperand, state.operation),
+        overwrite: true
+      }
     default:
       return state;
+  }
+}
+
+function evaluate(prev, curr, operation) {
+  prev = parseFloat(prev);
+  curr = parseFloat(curr);
+  switch (operation) {
+    case "/":
+      return prev / curr;
+    case "*":
+      return prev * curr;
+    case "+":
+      return prev + curr;
+    case "-":
+      return prev - curr;
+    default:
+      return;
   }
 }
 
@@ -27,27 +71,27 @@ function App() {
   return (
     <div className="calculator-grid">
       <div className="output">
-        <div className="prev-operand">{prevOperand}</div>
+        <div className="prev-operand">{prevOperand}{operation}</div>
         <div className="сurr-operand">{currOperand}</div>
       </div>
       <button className='span-two' onClick={() => dispatch({ type: ACTIONS.CLEAR })}>AC</button>
       <button>Del</button>
-      <button>/</button>
+      <OperationButton operation="/" dispatch={dispatch} />
       <DigitButton value="1" dispatch={dispatch} />
       <DigitButton value="2" dispatch={dispatch} />
       <DigitButton value="3" dispatch={dispatch} />
-      <button>*</button>
+      <OperationButton operation="*" dispatch={dispatch} />
       <DigitButton value="4" dispatch={dispatch} />
       <DigitButton value="5" dispatch={dispatch} />
       <DigitButton value="6" dispatch={dispatch} />
-      <button>+</button>
+      <OperationButton operation="+" dispatch={dispatch} />
       <DigitButton value="7" dispatch={dispatch} />
       <DigitButton value="8" dispatch={dispatch} />
       <DigitButton value="9" dispatch={dispatch} />
-      <button>-</button>
+      <OperationButton operation="-" dispatch={dispatch} />
       <DigitButton value="0" dispatch={dispatch} />
       <DigitButton value="." dispatch={dispatch} />
-      <button className='span-two'>=</button>
+      <button className='span-two' onClick={() => dispatch({ type: ACTIONS.EQUALS })}>=</button>
     </div>
   );
 }
