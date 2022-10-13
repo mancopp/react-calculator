@@ -29,12 +29,24 @@ function reducer(state, { type, payload }) {
     case ACTIONS.CLEAR:
       return {};
     case ACTIONS.OPERATION:
-      return {
-        ...state,
-        operation: payload.operation,
-        prevOperand: state.currOperand,
-        currOperand: null
+      if (!state.prevOperand) {
+        return {
+          ...state,
+          operation: payload.operation,
+          prevOperand: state.currOperand,
+          currOperand: null
+        }
       }
+      else {
+        return {
+          ...state,
+          operation: payload.operation,
+          prevOperand: evaluate(state.prevOperand, state.currOperand, state.operation),
+          currOperand: null,
+          overwrite: true
+        }
+      }
+
     case ACTIONS.EQUALS:
       return {
         ...state,
