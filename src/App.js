@@ -16,7 +16,6 @@ function reducer(state, { type, payload }) {
       if (state.overwrite) {
         return {
           ...state,
-          prevOperand: state.currOperand,
           currOperand: payload.value,
           overwrite: false
         }
