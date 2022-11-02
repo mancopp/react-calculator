@@ -13,6 +13,10 @@ export const ACTIONS = {
 function reducer(state, { type, payload }) {
   switch (type) {
     case ACTIONS.ADD_DIGIT:
+      // alert(state.currOperand);
+      if (state.currOperand === "0" && payload.value === "0") return state;
+      //TODO: line 19 causes crush
+      if (state.currOperand.includes(".") && payload.value === ".") return state;
       if (state.overwrite) {
         return {
           ...state,
